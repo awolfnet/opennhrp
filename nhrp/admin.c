@@ -557,7 +557,7 @@ static void admin_timeout_cb(struct ev_loop *loop, struct ev_timer *t, int reven
 	admin_free_remote(container_of(t, struct admin_remote, timeout));
 }
 
-static void admin_accept_cb(ev_io *w, int revents)
+static void admin_accept_cb(struct ev_loop *loop, ev_io *w, int revents)
 {
 	struct admin_remote *rm;
 	struct sockaddr_storage from;

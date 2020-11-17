@@ -249,7 +249,7 @@ int forward_local_addresses_changed(void)
 	return TRUE;
 }
 
-static void send_multicast(struct ev_idle *w, int revents)
+static void send_multicast(struct ev_loop *loop, struct ev_idle *w, int revents)
 {
 	struct multicast_packet *pkt;
 	struct nhrp_peer *peer;

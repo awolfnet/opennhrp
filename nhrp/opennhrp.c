@@ -68,7 +68,7 @@ void nhrp_hex_dump(const char *name, const uint8_t *buf, int bytes)
 	fprintf(stderr, "\n");
 }
 
-static void handle_signal_cb(struct ev_signal *w, int revents)
+static void handle_signal_cb(struct ev_loop *loop, struct ev_signal *w, int revents)
 {
 	struct nhrp_peer_selector sel;
 
