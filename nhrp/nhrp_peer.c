@@ -422,7 +422,7 @@ void nhrp_peer_run_script(struct nhrp_peer *peer, char *action,
 		if (peer->mtu)
 			envp[i++] = envu32("NHRP_DESTMTU", peer->mtu);
 		if (peer->next_hop_nat_oa.type != PF_UNSPEC)
-			envp[i++] = env("NHRP_DESTNBMA_NAT_OA", sizeof(tmp), tmp));
+			envp[i++] = env("NHRP_DESTNBMA_NAT_OA", sizeof(tmp), tmp);
 		break;
 	case NHRP_PEER_TYPE_SHORTCUT_ROUTE:
 	case NHRP_PEER_TYPE_LOCAL_ROUTE:
