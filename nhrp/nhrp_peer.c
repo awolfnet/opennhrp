@@ -418,7 +418,7 @@ void nhrp_peer_run_script(struct nhrp_peer *peer, char *action,
 	case NHRP_PEER_TYPE_DYNAMIC:
 	case NHRP_PEER_TYPE_DYNAMIC_NHS:
 		envp[i++] = env("NHRP_DESTNBMA", nhrp_address_format(&peer->next_hop_address, sizeof(tmp), tmp));
-		nhrp_debug("NHRP_DESTNBMA: [%s]", tmp);
+		nhrp_debug("dbg|NHRP_DESTNBMA: [%s]", tmp);
 		if (peer->mtu)
 			envp[i++] = envu32("NHRP_DESTMTU", peer->mtu);
 		if (peer->next_hop_nat_oa.type != PF_UNSPEC)
@@ -760,6 +760,7 @@ static void nhrp_peer_address_query_cb(struct nhrp_address_query *query,
 		nhrp_info("Resolved '%s' as %s",
 			  peer->nbma_hostname,
 			  nhrp_address_format(&addrs[0], sizeof(host), host));
+		nhrp_debug("dbg|(nhrp_peer_address_query_cb)next_hop_address: [%s]", host);
 		peer->next_hop_address = addrs[0];
 		peer->afnum = nhrp_afnum_from_pf(peer->next_hop_address.type);
 		nhrp_peer_run_up_script(peer);
@@ -772,6 +773,12 @@ static void nhrp_peer_address_query_cb(struct nhrp_address_query *query,
 static void nhrp_peer_restart_cb(struct ev_loop *loop, struct ev_timer *w, int revents)
 {
 	struct nhrp_peer *peer = container_of(w, struct nhrp_peer, timer);
+
+	nhrp_debug("dbg|(nhrp_peer_restart_cb) start");
+
+	char tmp[64];
+	nhrp_address_format(&peer->next_hop_address, sizeof(tmp), tmp);
+	nhrp_debug("dbg|(nhrp_peer_restart_cb)next_hop_address: [%s]", tmp);
 
 	if (peer->nbma_hostname != NULL) {
 		nhrp_address_resolve(&peer->address_query,
@@ -1583,6 +1590,8 @@ static void nhrp_peer_insert_cb(struct ev_loop *loop, struct ev_timer *w, int re
 {
 	struct nhrp_peer *peer = container_of(w, struct nhrp_peer, timer);
 
+	nhrp_debug("dbg|(nhrp_peer_insert_cb) start");
+
 	nhrp_peer_cancel_async(peer);
 	switch (peer->type) {
 	case NHRP_PEER_TYPE_LOCAL_ADDR:
@@ -1675,6 +1684,8 @@ void nhrp_peer_insert(struct nhrp_peer *peer)
 {
 	struct nhrp_peer_selector sel;
 	char tmp[NHRP_PEER_FORMAT_LEN];
+
+	nhrp_debug("dbg|(nhrp_peer_insert) start.");
 
 	/* First, prune all duplicates */
 	memset(&sel, 0, sizeof(sel));
