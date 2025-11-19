@@ -1144,6 +1144,7 @@ int kernel_inject_neighbor(struct nhrp_address *neighbor,
 		netlink_add_rtattr_l(&req.n, sizeof(req), NDA_LLADDR,
 				     hwaddr->addr, hwaddr->addr_len);
 
+					 
 		nhrp_debug("NL-ARP(%s) %s is-at %s",
 			   dev->name,
 			   nhrp_address_format(neighbor, sizeof(neigh), neigh),

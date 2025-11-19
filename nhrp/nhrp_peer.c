@@ -417,21 +417,16 @@ void nhrp_peer_run_script(struct nhrp_peer *peer, char *action,
 	case NHRP_PEER_TYPE_STATIC:
 	case NHRP_PEER_TYPE_DYNAMIC:
 	case NHRP_PEER_TYPE_DYNAMIC_NHS:
-		envp[i++] = env("NHRP_DESTNBMA",
-			nhrp_address_format(&peer->next_hop_address,
-					    sizeof(tmp), tmp));
+		envp[i++] = env("NHRP_DESTNBMA", nhrp_address_format(&peer->next_hop_address, sizeof(tmp), tmp));
+		nhrp_debug("NHRP_DESTNBMA: [%s]", tmp);
 		if (peer->mtu)
 			envp[i++] = envu32("NHRP_DESTMTU", peer->mtu);
 		if (peer->next_hop_nat_oa.type != PF_UNSPEC)
-			envp[i++] = env("NHRP_DESTNBMA_NAT_OA",
-				nhrp_address_format(&peer->next_hop_nat_oa,
-						    sizeof(tmp), tmp));
+			envp[i++] = env("NHRP_DESTNBMA_NAT_OA", sizeof(tmp), tmp));
 		break;
 	case NHRP_PEER_TYPE_SHORTCUT_ROUTE:
 	case NHRP_PEER_TYPE_LOCAL_ROUTE:
-		envp[i++] = env("NHRP_NEXTHOP",
-			nhrp_address_format(&peer->next_hop_address,
-					    sizeof(tmp), tmp));
+		envp[i++] = env("NHRP_NEXTHOP", nhrp_address_format(&peer->next_hop_address, sizeof(tmp), tmp));
 		break;
 	default:
 		NHRP_BUG_ON("invalid peer type");
