@@ -1592,6 +1592,10 @@ static void nhrp_peer_insert_cb(struct ev_loop *loop, struct ev_timer *w, int re
 
 	nhrp_debug("dbg|(nhrp_peer_insert_cb) start");
 
+	char tmp[64];
+	nhrp_address_format(&peer->next_hop_address, sizeof(tmp), tmp);
+	nhrp_debug("dbg|(nhrp_peer_insert_cb)next_hop_address: [%s]", tmp);
+
 	nhrp_peer_cancel_async(peer);
 	switch (peer->type) {
 	case NHRP_PEER_TYPE_LOCAL_ADDR:
@@ -1722,9 +1726,20 @@ void nhrp_peer_insert(struct nhrp_peer *peer)
 
 	/* Start peers life */
 	if (nhrp_running || peer->type == NHRP_PEER_TYPE_LOCAL_ADDR)
+	{
+		nhrp_debug("dbg|(nhrp_peer_insert) insert cb.");
 		nhrp_peer_insert_cb(nhrp_loop, &peer->timer, 0);
+	}	
 	else
+	{
+
+		char tmp[64];
+		nhrp_address_format(&peer->next_hop_address, sizeof(tmp), tmp);
+		nhrp_debug("dbg|(nhrp_peer_insert)next_hop_address: [%s]", tmp);
+
+		nhrp_debug("dbg|(nhrp_peer_insert) scheduled insert cb.");
 		nhrp_peer_schedule(peer, 0, &nhrp_peer_insert_cb);
+	}
 }
 
 static void nhrp_peer_script_peer_down_done(
