@@ -1597,6 +1597,9 @@ static void nhrp_peer_insert_cb(struct ev_loop *loop, struct ev_timer *w, int re
 	nhrp_debug("dbg|(nhrp_peer_insert_cb)next_hop_address: [%s]", tmp);
 
 	nhrp_peer_cancel_async(peer);
+
+	nhrp_debug("dbg|(nhrp_peer_insert_cb) peer->type: [%X]", peer->type);
+
 	switch (peer->type) {
 	case NHRP_PEER_TYPE_LOCAL_ADDR:
 		peer->flags |= NHRP_PEER_FLAG_UP;
