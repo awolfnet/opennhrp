@@ -1187,6 +1187,8 @@ int nhrp_packet_send_request(struct nhrp_packet *pkt,
 {
 	struct nhrp_packet *packet;
 
+	nhrp_debug("dbg|(nhrp_packet_send_request) start");
+
 	packet = nhrp_packet_get(pkt);
 
 	packet->retry = 0;

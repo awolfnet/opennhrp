@@ -1176,11 +1176,13 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 {
 	struct nhrp_peer *peer = (struct nhrp_peer *) ctx, *np;
 	struct nhrp_payload *payload;
-	struct nhrp_cie *cie, *natcie = NULL, *natoacie = NULL;
+	struct nhrp_cie *cie, *natcie = NULL, *natcie2 = NULL, *natoacie = NULL;
 	struct nhrp_interface *iface;
 	struct nhrp_peer_selector sel;
 	char dst[64], tmp[64], nbma[64];
 	int ec;
+
+	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) start");
 
 	if (peer->flags & NHRP_PEER_FLAG_REMOVED)
 		goto ret;
@@ -1222,8 +1224,12 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 				      sizeof(nbma), nbma),
 		  cie->hdr.code);
 
+	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie->hdr.code: [%d]", cie->hdr.code);
+
 	if (cie->hdr.code != NHRP_CODE_SUCCESS)
 		goto ret;
+
+	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) NHRP_CODE_SUCCESS");
 
 	payload = nhrp_packet_extension(reply,
 					NHRP_EXTENSION_NAT_ADDRESS |
@@ -1240,6 +1246,8 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 				nhrp_address_format(&natcie->nbma_address,
 					sizeof(nbma), nbma));
 		}
+
+		//natcie2 = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
 	}
 	if (natcie == NULL)
 		natcie = cie;
@@ -1322,6 +1330,8 @@ static void nhrp_peer_send_resolve(struct nhrp_peer *peer)
 	struct nhrp_packet *packet;
 	struct nhrp_cie *cie;
 	struct nhrp_payload *payload;
+
+	nhrp_debug("dbg|(nhrp_peer_send_resolve) start");
 
 	packet = nhrp_packet_alloc();
 	if (packet == NULL)
@@ -1591,14 +1601,13 @@ static void nhrp_peer_insert_cb(struct ev_loop *loop, struct ev_timer *w, int re
 	struct nhrp_peer *peer = container_of(w, struct nhrp_peer, timer);
 
 	nhrp_debug("dbg|(nhrp_peer_insert_cb) start");
+	nhrp_debug("dbg|(nhrp_peer_insert_cb) peer->type: [0x%X]", peer->type);
 
 	char tmp[64];
 	nhrp_address_format(&peer->next_hop_address, sizeof(tmp), tmp);
 	nhrp_debug("dbg|(nhrp_peer_insert_cb)next_hop_address: [%s]", tmp);
 
 	nhrp_peer_cancel_async(peer);
-
-	nhrp_debug("dbg|(nhrp_peer_insert_cb) peer->type: [%X]", peer->type);
 
 	switch (peer->type) {
 	case NHRP_PEER_TYPE_LOCAL_ADDR:
