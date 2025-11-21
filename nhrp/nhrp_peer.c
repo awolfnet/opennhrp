@@ -1224,8 +1224,6 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 				      sizeof(nbma), nbma),
 		  cie->hdr.code);
 
-	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie->hdr.code: [%d]", cie->hdr.code);
-
 	if (cie->hdr.code != NHRP_CODE_SUCCESS)
 		goto ret;
 
@@ -1251,6 +1249,13 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 	}
 	if (natcie == NULL)
 		natcie = cie;
+
+	char peer_protocol_address[64], cie_protocol_address[64];
+	nhrp_address_format(&peer->protocol_address, sizeof(peer_protocol_address), peer_protocol_address);
+	nhrp_address_format(&cie->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
+	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) peer_protocol_address: [%s]", peer_protocol_address);
+	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
+
 
 	if (nhrp_address_cmp(&peer->protocol_address, &cie->protocol_address)
 	    == 0) {
