@@ -1230,6 +1230,18 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 	if ((reply->hdr.flags & NHRP_FLAG_RESOLUTION_NAT) &&
 	    (payload != NULL)) {
 		natcie = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
+		/*
+		 * Find the matching NAT CIE to the protocol address
+		*/
+		while(natcie != NULL && nhrp_address_cmp(&peer->protocol_address, &natcie->protocol_address) != 0)
+		{
+			natcie = list_next(&natcie->cie_list_entry, struct nhrp_cie, cie_list_entry);
+			if(natcie->protocol_address.type == PF_UNSPEC)
+			{
+				natcie = NULL;
+			}
+		}
+
 		if (natcie != NULL) {
 			natoacie = cie;
 			nhrp_info("NAT detected: really at proto %s nbma %s",
