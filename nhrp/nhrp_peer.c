@@ -1260,7 +1260,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 
 			natcie = list_next(&natcie->cie_list_entry, struct nhrp_cie, cie_list_entry);
 
-			if(natcie->type == PF_UNSPEC)
+			if(natcie->protocol_address.type == PF_UNSPEC)
 			{
 				break;
 			}
