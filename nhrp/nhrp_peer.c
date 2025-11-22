@@ -1249,6 +1249,8 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 
 			struct nhrp_cie *cie_entry = NULL;
 
+			cie_entry = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
+
 			while(cie_entry != NULL)
 			{
 				char cie_protocol_address[64], cie_nbma_address[64];
