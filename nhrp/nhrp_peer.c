@@ -1255,7 +1255,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 			//struct list_head *next = cie_entry->cie_list_entry.next;
 			//cie_entry = list_entry(next, struct nhrp_cie, cie_list_entry);
 
-			cie_entry = list_next(cie_entry->cie_list_entry, struct nhrp_cie, cie_list_entry);
+			cie_entry = list_next(&cie_entry->cie_list_entry, struct nhrp_cie, cie_list_entry);
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) current cie: [0x%x]", cie_entry);
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
 		}
