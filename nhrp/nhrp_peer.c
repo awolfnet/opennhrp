@@ -1245,7 +1245,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 		while(cie_entry != NULL) 
 		{
 			char cie_protocol_address[64], cie_nbma_address[64];
-			
+
 			nhrp_address_format(&cie_entry->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
 			nhrp_address_format(&cie_entry->nbma_address, sizeof(cie_nbma_address), cie_nbma_address);
 
@@ -1254,7 +1254,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
 
-			cie_entry=cie_entry->cie_list_entry.next;
+			cie_entry = list_next(&cie_entry->cie_list_entry , struct nhrp_cie, cie_list_entry);
 		}
 
 
