@@ -1239,30 +1239,34 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 	if ((reply->hdr.flags & NHRP_FLAG_RESOLUTION_NAT) &&
 	    (payload != NULL)) {
 		natcie = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
-
-
-		struct nhrp_cie *cie_entry = natcie;
-		while(cie_entry != NULL) 
+		while(natcie != NULL) 
 		{
-			char cie_protocol_address[64], cie_nbma_address[64];
+			char peer_protocol_address[64], peer_next_hop_address[64], peer_next_hop_nat_oa[64], cie_protocol_address[64], cie_nbma_address[64], natcie_protocol_address[64], natcie_nbma_address[64];
+			nhrp_address_format(&peer->protocol_address, sizeof(peer_protocol_address), peer_protocol_address);
+			nhrp_address_format(&peer->next_hop_address, sizeof(peer_next_hop_address), peer_next_hop_address);
+			nhrp_address_format(&peer->next_hop_nat_oa, sizeof(peer_next_hop_nat_oa), peer_next_hop_nat_oa);
+			nhrp_address_format(&cie->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
+			nhrp_address_format(&cie->nbma_address, sizeof(cie_nbma_address), cie_nbma_address);
+			nhrp_address_format(&natcie->protocol_address, sizeof(natcie_protocol_address), natcie_protocol_address);
+			nhrp_address_format(&natcie->nbma_address, sizeof(natcie_nbma_address), natcie_nbma_address);
 
-			nhrp_address_format(&cie_entry->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
-			nhrp_address_format(&cie_entry->nbma_address, sizeof(cie_nbma_address), cie_nbma_address);
-
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) peer_protocol_address: [%s]", peer_protocol_address);
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) peer_next_hop_address: [%s]", peer_next_hop_address);
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) peer_next_hop_nat_oa: [%s]", peer_next_hop_nat_oa);
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_nbma_address: [%s]", cie_nbma_address);
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) natcie_protocol_address: [%s]", natcie_protocol_address);
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) natcie_nbma_address: [%s]", natcie_nbma_address);
 
-			//struct list_head *next = cie_entry->cie_list_entry.next;
-			//cie_entry = list_entry(next, struct nhrp_cie, cie_list_entry);
+			natcie = list_next(&natcie->cie_list_entry, struct nhrp_cie, cie_list_entry);
 
-			cie_entry = list_next(&cie_entry->cie_list_entry, struct nhrp_cie, cie_list_entry);
-			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) current cie: [0x%x]", cie_entry);
-			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
+			if(natcie->type == PF_UNSPEC)
+			{
+				break;
+			}
+
 		}
 
-
-
-		
 		if (natcie != NULL) {
 			natoacie = cie;
 			nhrp_info("NAT detected: really at proto %s nbma %s",
@@ -1272,23 +1276,10 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 					sizeof(nbma), nbma));
 
 		}
-
-		//natcie2 = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
 	}
 	if (natcie == NULL)
 		natcie = cie;
 
-	char peer_protocol_address[64], peer_next_hop_address[64], peer_next_hop_nat_oa[64], cie_protocol_address[64], cie_nbma_address[64];
-	nhrp_address_format(&peer->protocol_address, sizeof(peer_protocol_address), peer_protocol_address);
-	nhrp_address_format(&peer->next_hop_address, sizeof(peer_next_hop_address), peer_next_hop_address);
-	nhrp_address_format(&peer->next_hop_nat_oa, sizeof(peer_next_hop_nat_oa), peer_next_hop_nat_oa);
-	nhrp_address_format(&cie->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
-	nhrp_address_format(&cie->nbma_address, sizeof(cie_nbma_address), cie_nbma_address);
-	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) peer_protocol_address: [%s]", peer_protocol_address);
-	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) peer_next_hop_address: [%s]", peer_next_hop_address);
-	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) peer_next_hop_nat_oa: [%s]", peer_next_hop_nat_oa);
-	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
-	nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_nbma_address: [%s]", cie_nbma_address);
 
 	if (nhrp_address_cmp(&peer->protocol_address, &cie->protocol_address)
 	    == 0) {
