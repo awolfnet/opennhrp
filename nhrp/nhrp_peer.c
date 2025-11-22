@@ -1239,6 +1239,27 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 	if ((reply->hdr.flags & NHRP_FLAG_RESOLUTION_NAT) &&
 	    (payload != NULL)) {
 		natcie = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
+
+
+		struct nhrp_cie *cie_entry = natcie;
+		while(cie_entry != NULL) 
+		{
+			char cie_protocol_address[64], cie_nbma_address[64];
+			
+			nhrp_address_format(&cie_entry->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
+			nhrp_address_format(&cie_entry->nbma_address, sizeof(cie_nbma_address), cie_nbma_address);
+
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_nbma_address: [%s]", cie_nbma_address);
+
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
+
+			cie_entry=cie_entry->cie_list_entry.next;
+		}
+
+
+
+		
 		if (natcie != NULL) {
 			natoacie = cie;
 			nhrp_info("NAT detected: really at proto %s nbma %s",
@@ -1246,24 +1267,6 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 					sizeof(tmp), tmp),
 				nhrp_address_format(&natcie->nbma_address,
 					sizeof(nbma), nbma));
-
-			struct nhrp_cie *cie_entry = NULL;
-
-			cie_entry = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
-
-			while(cie_entry != NULL)
-			{
-				char cie_protocol_address[64], cie_nbma_address[64];
-				nhrp_address_format(&cie_entry->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
-				nhrp_address_format(&cie_entry->nbma_address, sizeof(cie_nbma_address), cie_nbma_address);
-
-				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
-				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_nbma_address: [%s]", cie_nbma_address);
-
-				cie_entry = list_next(&cie_entry->cie_list_entry, struct nhrp_cie, cie_list_entry);
-
-				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
-			}
 
 		}
 
