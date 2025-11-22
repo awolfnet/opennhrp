@@ -1260,7 +1260,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
 				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_nbma_address: [%s]", cie_nbma_address);
 
-				cie_entry = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
+				cie_entry = list_next(&cie_entry->cie_list_entry, struct nhrp_cie, cie_list_entry);
 
 				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
 			}
