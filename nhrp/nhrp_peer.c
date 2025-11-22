@@ -1255,7 +1255,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
 
 			struct list_head *next = cie_entry->cie_list_entry.next;
-			cie_entry = list_next(next , struct nhrp_cie, cie_list_entry);
+			cie_entry = list_entry(next, struct nhrp_cie, cie_list_entry);
 		}
 
 
