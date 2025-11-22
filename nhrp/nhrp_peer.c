@@ -1252,10 +1252,11 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_nbma_address: [%s]", cie_nbma_address);
 
-			struct list_head *next = cie_entry->cie_list_entry.next;
-			cie_entry = list_entry(next, struct nhrp_cie, cie_list_entry);
+			//struct list_head *next = cie_entry->cie_list_entry.next;
+			//cie_entry = list_entry(next, struct nhrp_cie, cie_list_entry);
 
-			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) next: [0x%x]", next);
+			cie_entry = list_next(cie_entry->cie_list_entry, struct nhrp_cie, cie_list_entry);
+			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) current cie: [0x%x]", cie_entry);
 			nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
 		}
 
