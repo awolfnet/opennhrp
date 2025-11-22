@@ -1249,7 +1249,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 
 			struct nhrp_cie *cie_entry = NULL;
 
-			do while(cie_entry != NULL)
+			while(cie_entry != NULL)
 			{
 				char cie_protocol_address[64], cie_nbma_address[64];
 				nhrp_address_format(&cie_entry->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
