@@ -1176,7 +1176,7 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 {
 	struct nhrp_peer *peer = (struct nhrp_peer *) ctx, *np;
 	struct nhrp_payload *payload;
-	struct nhrp_cie *cie, *natcie = NULL, *natcie2 = NULL, *natoacie = NULL;
+	struct nhrp_cie *cie, *natcie = NULL, *natoacie = NULL;
 	struct nhrp_interface *iface;
 	struct nhrp_peer_selector sel;
 	char dst[64], tmp[64], nbma[64];
@@ -1233,6 +1233,9 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 					NHRP_EXTENSION_NAT_ADDRESS |
 					NHRP_EXTENSION_FLAG_NOCREATE,
 					NHRP_PAYLOAD_TYPE_CIE_LIST);
+
+
+
 	if ((reply->hdr.flags & NHRP_FLAG_RESOLUTION_NAT) &&
 	    (payload != NULL)) {
 		natcie = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
@@ -1243,6 +1246,23 @@ static void nhrp_peer_handle_resolution_reply(void *ctx,
 					sizeof(tmp), tmp),
 				nhrp_address_format(&natcie->nbma_address,
 					sizeof(nbma), nbma));
+
+			struct nhrp_cie *cie_entry = NULL;
+
+			do while(cie_entry != NULL)
+			{
+				char cie_protocol_address[64], cie_nbma_address[64];
+				nhrp_address_format(&cie_entry->protocol_address, sizeof(cie_protocol_address), cie_protocol_address);
+				nhrp_address_format(&cie_entry->nbma_address, sizeof(cie_nbma_address), cie_nbma_address);
+
+				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_protocol_address: [%s]", cie_protocol_address);
+				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) cie_nbma_address: [%s]", cie_nbma_address);
+
+				cie_entry = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
+
+				nhrp_debug("dbg|(nhrp_peer_handle_resolution_reply) ============================");
+			}
+
 		}
 
 		//natcie2 = list_next(&payload->u.cie_list, struct nhrp_cie, cie_list_entry);
